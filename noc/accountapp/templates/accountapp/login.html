@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log-in</title>
+</head>
+<body>
+    <div id="header">
+        <span class="logo">Project NOC</span>
+    </div>
+    <h1>Log-in</h1>
+    <p>Please, use the following form to log-in:</p>
+    <form method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p>
+            <button type="submit">Log-in</button>
+        </p>
+    </form>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<div>
+    <p>Create ip network {{ netv4.net_prefix }}</p>
+    <p>Description: {{ netv4.net_description }}</p>
+    <p>Created Date: {{ netv4.net_createdate }}</p>
+</div>
+
+<div class="inline-elements">
+    <input type="button" onclick="location.href='/ipnetapp/list/';" value="List networks" />
+ <!--   <input type="button" onclick="location.href='/ipnetapp/divide/';" value="Split network" /> -->
+    <input type="button" onclick="redirectToSplitNetwork({{ netv4.net_id }});" value="Create IP subnet" />
+ <!--   <input type="button" onclick="location.href='/ipnetapp/delete/';" value="Delete network" /> -->
+    <input type="button" onclick="DeleteNetwork({{ netv4.net_id }});" value="Delete network" />
+<!-- Второй вариант кнопки Delete
+    <form method="post" action="{% url 'delete_network' netv4.net_id %}">
+        {% csrf_token %}
+        <input type="submit" value="Delete network">
+    </form> -->
+</div>
+<h4>List of IP subnets:</h4>
+    <ul>
+        {% for network in networks|dictsort:'net_prefix' %}
+            <li><a href="{% url 'ipv4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
+        {% endfor %}
+    </ul>
+
+<script>
+    function redirectToSplitNetwork(netId) {
+        window.location.href = `/ipnetapp/net_v4_${netId}/split/`;
+    }
+</script>
+<script>
+    function DeleteNetwork(netId) {
+        window.location.href = `/ipnetapp/net_v4_${netId}/delete/`;
+    }
+</script>
+
+
+
+{% endblock %}

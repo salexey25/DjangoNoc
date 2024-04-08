@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<div>
+    <p>Create ip network {{ netv4.net_prefix }}</p>
+    <p>Description: {{ netv4.net_description }}</p>
+    <p>Created Date: {{ netv4.net_createdate }}</p>
+</div>
+<h4>List of IP addresses:</h4>
+<ul>
+    {% for ip_add in ip_adds %}
+        <li>{{ ip_add.ip_add }} - {{ ip_add.ip_description }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<body>
+    <h2>You can create a new IP network in the range from /19 to /24</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Create Network</button>
+    </form>
+</body>
+{% endblock %}

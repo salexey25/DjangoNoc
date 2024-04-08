@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Network List</title>
+</head>
+<body>
+    <h1>IP Network List</h1>
+    <div style="display: flex; gap: 10px;">
+        <form method="get" action="{% url 'create_network' %}">
+            <button type="submit">Create_network</button>
+        </form>
+        <form method="get" action="{% url 'deleted_network_list' %}">
+            <button type="submit">Show remote networks</button>
+        </form>
+    </div>
+     <ul>
+        {% for network in networks %}
+           <!-- <li>{{ network.net_prefix }} - {{ network.net_description }}</li> -->
+            <li><a href="{% url 'nets_v4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

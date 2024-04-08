@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+    <h1>Deleted Network List</h1>
+    <form method="get" action="{% url 'network_list' %}">
+        <button type="submit">Return to list of networks</button>
+    </form>
+    <br>
+    <ul>
+        {% for network in deleted_networks %}
+            <li>
+                {{ network.net_prefix }} - {{ network.net_description }}
+                <br>
+                Deleted by: {{ network.deleted_by.username }} <!-- Display the username of the user who deleted the network -->
+                <br>
+                Deleted at: {{ network.deleted_at }} <!-- Display the date and time when the network was deleted -->
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

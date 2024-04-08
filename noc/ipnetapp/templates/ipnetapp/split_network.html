@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+
+<form method="post" action="{% url 'subnet' netv4.net_id %}">
+    {% csrf_token %}
+    <input type="hidden" name="net_id" value="{{ netv4.net_id }}">
+
+    <!-- Для отображения ошибки -->
+    {% if message %}
+        <p class="success-message" style="color: red;" role="alert">{{ message }}</p>
+    {% endif %}
+
+    <!-- Информационное поле -->
+    <div>
+        <p>Сеть для разделения: {{netv4.net_prefix }}</p>
+    </div>
+
+    <!-- Поле для ввода сети -->
+    <label for="network">Subnet prefix:</label>
+    <input type="text" id="network" name="network">
+    <br><br>
+
+    <!-- Выбор маски сети -->
+    <label for="subnet_mask">Mask prefix:</label>
+    <select id="subnet_mask" name="subnet_mask">
+        <option value="/25">/25</option>
+        <option value="/26">/26</option>
+        <option value="/27">/27</option>
+        <option value="/28">/28</option>
+        <option value="/29">/29</option>
+        <option value="/30">/30</option>
+        <option value="/31">/31</option>
+    </select>
+    <br><br>
+
+    <!-- Поле для описания -->
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description">
+    <br><br>
+
+    <!-- Кнопка "Разделить сеть" -->
+    <input type="submit" value="Split">
+</form>
+
+<h4>Список сетей с родительской сетью {{netv4.net_prefix }}</h4>
+<!--    <ul>
+        {% for network in networks %}
+            {% if network.net_parent_id == netv4.net_id %}
+                <li>{{ network.net_prefix }} - {{ network.net_description }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul> -->
+    <ul>
+        {% for network in networks|dictsort:'net_prefix' %}
+            <li><a href="{% url 'ipv4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
