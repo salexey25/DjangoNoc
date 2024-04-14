@@ -1,27 +1,30 @@
-from django.shortcuts import render, redirect
-from .forms import DeviceForm, RackForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import DeviceForm, RackForm, NodeForm
 from .models import Device, Rack
 
+
 # Create your views here.
-def create_rack(request):
-    cities = [('city1', 'City 1'), ('city2', 'City 2'), ('city3', 'City 3')]
+
+def create_node(request):
+    if request.method == 'POST':
+        form = NodeForm(request.POST)
+        if form.is_valid():
+            form.save()
+ #           return redirect('node_list')
+            return redirect('/eqapp/node_%s/'%form.instance.nd_id)# Перенаправление на страницу узла связи
+    else:
+        form = NodeForm()
+    return render(request, 'eqapp/node_form.html', {'form': form})
+
+def rack(request, nd_id):
     if request.method == 'POST':
         form = RackForm(request.POST)
         if form.is_valid():
-            rack = form.save(commit=False)  # Создаем объект Rack, но не сохраняем его пока в базе данных
-            rack.nd_city = request.POST.get('nd_city')  # Получаем выбранное значение из POST-запроса
-            rack.nd_address = request.POST.get('nd_address')
-            rack.nd_name = request.POST.get('nd_name')
-            rack.nd_contact = request.POST.get('nd_contact')
-            rack.nd_description = request.POST.get('nd_description')
-            rack.nd_rack_num = request.POST.get('nd_rack_num')
-            rack.nd_rack_unit = request.POST.get('nd_rack_unit')
-            rack.nd_rack_type = request.POST.get('nd_rack_type')
             rack.save()
             return redirect('rack_list')  # Перенаправление на список стоек
     else:
         form = RackForm()
-    return render(request, 'eqapp/rack_form.html', {'form': form, 'cities': cities})
+    return render(request, 'eqapp/create_rack.html', {'form': form})
 
 def create_device(request):
     if request.method == 'POST':
@@ -32,3 +35,20 @@ def create_device(request):
     else:
         form = DeviceForm()
     return render(request, 'eqapp/device_form.html', {'form': form})
+
+
+def node_view(request, nd_id):
+    #Получаем объект Node по его ID или возвращаем 404 ошибку, если не найден
+    node = get_object_or_404(Rack, nd_id=nd_id)
+
+    return render(request, 'eqapp/node_view.html', {'node': node})
+
+def create_rack(request, nd_id):
+    # Если объект не найден, будет возвращена страница с кодом 404 (страница “не найдено”)
+    node = get_object_or_404(Rack, nd_id=nd_id)
+    return render(request, 'eqapp/create_rack.html', {'node': node})
+
+def node_list(request):
+	# Получите все сети из базы данных, у которых net_parent_id равен NULL
+    nodes = Rack.objects.filter(nd_parent_id__isnull=True)
+    return render(request, 'eqapp/node_list.html', {'nodes': nodes})

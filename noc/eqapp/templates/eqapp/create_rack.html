@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<h1>Create Rack</h1>
+<form method="post">
+ {% csrf_token %}
+    <input type="hidden" name="nd_id" value="{{ node.nd_id }}">
+	<label for="Number">Rack_number</label>
+    <input type="text" id="rack_number" name="rack_number">
+    <br><br>
+    <label for="Unit">Rack_unit</label>
+    <input type="text" id="rack_unit" name="rack_unit">
+    <br><br>
+    <label for="Type">Rack_type</label>
+    <input type="text" id="rack_type" name="rack_type">
+    <br><br>
+	<input type="submit" value="Split">
+</form>
+{% endblock %}

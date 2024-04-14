@@ -4,9 +4,28 @@
 
 {% block content %}
     <h1>Dashboard</h1>
+
+    <ul>
     <li><a>IP network</a>
         <ul>
             <li><a href="/ipnetapp/list/">List IPv4 networks</a></li>
             <li><a href="/ipnetapp/create/">Create IPv4 network</a></li>
         </ul>
+    <br>
+    <li><a>Node&Rack</a></li>
+        <ul>
+            <li><a href="/eqapp/list/">List Node</a></li>
+            <li><a href="/eqapp/node/">Create Node</a></li>
+            <li><a>Create Rack</a></li>
+        </ul>
+    <br>
+    <li><a>Device</a></li>
+        <ul>
+            <li><a href="/eqapp/device/">Create device</a></li>
+        </ul>
+    <br>
+    <li><a>Customer</a></li>
+    <br>
+    <li><a>Services</a></li>
+    </ul>
 {% endblock %}

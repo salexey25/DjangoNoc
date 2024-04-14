@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<div>
+    <p>Node name: {{ node.nd_name }}</p>
+    <p>Node city: {{ node.nd_city }}</p>
+    <p>Node address: {{ node.nd_address }}</p>
+</div>
+
+<div class="inline-elements">
+    <input type="button" onclick="location.href='/eqapp/list/';" value="List node" />
+
+    <input type="button" onclick="redirectToCreateRack({{ node.nd_id }});" value="Create Rack" />
+
+</div>
+
+<script>
+    function redirectToCreateRack(nodeId) {
+        window.location.href = `/eqapp/node_${nodeId}/rack/`;
+    }
+</script>
+
+{% endblock %}

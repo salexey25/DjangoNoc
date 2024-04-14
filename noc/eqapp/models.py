@@ -8,9 +8,9 @@ class Rack(models.Model):
     nd_name = models.CharField(max_length=100)
     nd_contact = models.CharField(max_length=255)
     nd_description = models.TextField()
-    nd_rack_num = models.CharField(max_length=50)
-    nd_rack_unit = models.PositiveIntegerField()
-    nd_rack_type = models.CharField(max_length=50)
+    nd_rack_num = models.CharField(max_length=50, null=True, blank=True)
+    nd_rack_unit = models.CharField(max_length=50, null=True, blank=True)
+    nd_rack_type = models.CharField(max_length=50, null=True, blank=True)
     nd_parent_id = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):

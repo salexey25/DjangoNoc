@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+
+    <h1>Nodes</h1>
+    <div style="display: flex; gap: 10px;">
+        <form method="get" action="{% url 'create_node' %}">
+            <button type="submit">Create_node</button>
+        </form>
+    </div>
+     <ul>
+        {% for node in nodes %}
+            <li><a href="{% url 'node_detail' node.nd_id %}">{{ node.nd_city }} - {{ node.nd_name }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+
+{% endblock %}

@@ -9,5 +9,9 @@ class DeviceForm(forms.ModelForm):
 class RackForm(forms.ModelForm):
     class Meta:
         model = Rack
-        fields = ['nd_address', 'nd_name', 'nd_contact', 'nd_description', 'nd_rack_num', 'nd_rack_unit',
-                  'nd_rack_type', 'nd_rack_type']
+        fields = ['nd_rack_num', 'nd_rack_unit', 'nd_rack_type']
+
+class NodeForm(forms.ModelForm):
+    class Meta:
+        model = Rack
+        fields = ['nd_city','nd_address', 'nd_name', 'nd_contact', 'nd_description']
