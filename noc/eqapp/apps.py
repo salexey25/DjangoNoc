@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class NodeappConfig(AppConfig):
+class EqappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'nodeapp'
+    name = 'eqapp'

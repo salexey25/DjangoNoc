@@ -22,5 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accountapp/', include('accountapp.urls', namespace="accountapp")),
     path('ipnetapp/', include('ipnetapp.urls')),
-    path('nodeapp/', include('nodeapp.urls')),
+ #   path('nodeapp/', include('nodeapp.urls')),
+    path('eqapp/', include('eqapp.urls')),
+ #   path('servicesapp/', include('servicesapp.urls')),
 ]
