@@ -82,15 +82,30 @@ def network_list(request):
 def nets_v4_view(request, net_id):
     #Получаем объект NetV4 по его ID или возвращаем 404 ошибку, если не найден
     netv4 = get_object_or_404(IPNetwork, net_id=net_id)
-
     #Получение объекта network по его ID
     networks = IPNetwork.objects.filter(net_parent_id=net_id)
+#    return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'networks': networks})
+	# Получите значение маски из net_prefix
+    subnet = ip_network(netv4.net_prefix)
+    prefixlen = subnet.prefixlen
 
-    # Далее, логика обработки объекта netv4
-    # Например, вы можете передать его в шаблон для отображения
-
-    return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'networks': networks})
-#   return redirect('nets_v4_detail', netv4_id=netv4.id)
+    if prefixlen >= 25:
+        ip_addresses_exist = IPAddress.objects.filter(ip_parent_id=net_id).exists()
+        if not ip_addresses_exist:
+            #Генерируем IP-адреса для данной сети
+            ip_addresses = generate_ip_addresses(subnet)  # Предполагается, что у вас есть функция generate_ip_addresses
+            for ip_address in ip_addresses:
+                #Сохраняем IP-адреса в базе данных, используя модель IPAddress
+                ip_obj = IPAddress.objects.create(
+                    ip_add=str(ip_address),
+                    ip_description=f"Generated IP for {subnet}",
+                    ip_parent_id=netv4
+                )
+                ip_obj.save()
+        ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
+        return render(request, 'ipnetapp/net_ipv4_view.html', {'netv4': netv4, 'ip_adds': ip_adds})
+    else:
+        return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'networks': networks})
 
 
 #Генератор ip адресов для функции ipv4_view
@@ -170,7 +185,29 @@ def split_network(request, net_id):
 
     # Ваш код для обработки формы разделения сети
     # ...
-    return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})
+    #return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})
+    # Получите значение маски из net_prefix
+    # Получите значение маски из net_prefix
+    subnet = ip_network(netv4.net_prefix)
+    prefixlen = subnet.prefixlen
+
+    if prefixlen > 24:
+        ip_addresses_exist = IPAddress.objects.filter(ip_parent_id=net_id).exists()
+        if not ip_addresses_exist:
+            # Генерируем IP-адреса для данной сети
+            ip_addresses = generate_ip_addresses(subnet)  # Предполагается, что у вас есть функция generate_ip_addresses
+            for ip_address in ip_addresses:
+                # Сохраняем IP-адреса в базе данных, используя модель IPAddress
+                ip_obj = IPAddress.objects.create(
+                    ip_add=str(ip_address),
+                    ip_description=f"Generated IP for {subnet}",
+                    ip_parent_id=netv4
+                )
+                ip_obj.save()
+        ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
+        return render(request, 'ipnetapp/net_ipv4_view.html', {'netv4': netv4, 'ip_adds': ip_adds})
+    else:
+        return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})
 
 #функция удаления сети
 def delete_network(request, net_id):
@@ -239,8 +276,9 @@ def subnet(request, net_id):
                         #overlaps - True, если new_subnet частично или полностью содержиться в
                         #другой подсети, или другая полностью содержиться в этой
                         if ip_network(new_net.net_prefix).overlaps(ip_network(existing_subnet.net_prefix)):
+                            networks = IPNetwork.objects.filter(net_parent_id=net_id)
                             return render(request, 'ipnetapp/split_network.html',
-                                          {'netv4': parent_net, 'message': 'Пересечение сетей'})
+                                          {'netv4': parent_net,'networks': networks, 'message': 'Пересечение сетей'})
                     new_net.save()
                     networks = IPNetwork.objects.filter(net_parent_id=net_id)
                     return render(request, 'ipnetapp/split_network.html',
@@ -248,15 +286,18 @@ def subnet(request, net_id):
                     #return HttpResponse(f'filter{existing_subnets}')
 
                 else:
+                    networks = IPNetwork.objects.filter(net_parent_id=net_id)
                     return render(request, 'ipnetapp/split_network.html',
-                                  {'netv4': parent_net, 'message': 'Новая подсеть не входит в состав родительской сети.'})
+                                  {'netv4': parent_net,'networks': networks, 'message': 'Новая подсеть не входит в состав родительской сети.'})
 
             else:
+                networks = IPNetwork.objects.filter(net_parent_id=net_id)
                 return render(request, 'ipnetapp/split_network.html',
-                              {'netv4': parent_net, 'message': 'Маска новой подсети больше маски родительской подсети.'})
+                              {'netv4': parent_net,'networks': networks, 'message': 'Маска новой подсети больше маски родительской подсети.'})
         else:
+            networks = IPNetwork.objects.filter(net_parent_id=net_id)
             return render(request, 'ipnetapp/split_network.html',
-                          {'netv4': parent_net, 'message': 'Неправильная маска подсети.'})
+                          {'netv4': parent_net,'networks': networks, 'message': 'Неправильная маска подсети.'})
     else:
         # Если метод GET, просто отобразить форму
         parent_net = get_object_or_404(IPNetwork, net_id=net_id)

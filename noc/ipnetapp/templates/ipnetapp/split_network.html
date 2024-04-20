@@ -47,7 +47,10 @@
     <!-- Кнопка "Разделить сеть" -->
     <input type="submit" value="Split">
 </form>
-
+<br>
+<div>
+    <input type="button" onclick="location.href='/ipnetapp/list/';" value="List networks" />
+</div>
 <h4>Список сетей с родительской сетью {{netv4.net_prefix }}</h4>
 <!--    <ul>
         {% for network in networks %}
