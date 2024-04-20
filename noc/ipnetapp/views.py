@@ -166,6 +166,8 @@ def split_network(request, net_id):
     netv4 = get_object_or_404(IPNetwork, net_id=net_id)
     #networks = IPNetwork.objects.filter(net_parent_id=netv4.net_id)
     #networks = IPNetwork.objects.all()
+    #masks = ip_network(networks.net_prefix).prefixlen
+
     # Ваш код для обработки формы разделения сети
     # ...
     return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})

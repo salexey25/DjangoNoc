@@ -18,6 +18,7 @@
  <!--   <input type="button" onclick="location.href='/ipnetapp/divide/';" value="Split network" /> -->
     <input type="button" onclick="redirectToSplitNetwork({{ netv4.net_id }});" value="Create IP subnet" />
  <!--   <input type="button" onclick="location.href='/ipnetapp/delete/';" value="Delete network" /> -->
+    <input type="button" onclick="redirectToIPAdd({{ netv4.net_id }});" value="Create IP address" />
     <input type="button" onclick="DeleteNetwork({{ netv4.net_id }});" value="Delete network" />
 <!-- Второй вариант кнопки Delete
     <form method="post" action="{% url 'delete_network' netv4.net_id %}">
@@ -27,8 +28,17 @@
 </div>
 <h4>List of IP subnets:</h4>
     <ul>
-        {% for network in networks|dictsort:'net_prefix' %}
-            <li><a href="{% url 'ipv4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
+        {% for network in networks %}
+<!--            <li>
+             {% with mask=network.net_prefix|cut:"/" %}
+                    {% if mask|add:0 > 25 %}
+                        <a href="{% url 'ipv4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a>
+                    {% else %}
+                        <a href="{% url 'nets_v4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a>
+                    {% endif %}
+                    {% endwith %}
+            </li> -->
+            <li><a href="{% url 'nets_v4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
         {% endfor %}
     </ul>
 
@@ -37,6 +47,12 @@
         window.location.href = `/ipnetapp/net_v4_${netId}/split/`;
     }
 </script>
+<script>
+    function redirectToIPAdd(netId) {
+        window.location.href = `/ipnetapp/net_ipv4_${netId}/`;
+    }
+</script>
+
 <script>
     function DeleteNetwork(netId) {
         window.location.href = `/ipnetapp/net_v4_${netId}/delete/`;
