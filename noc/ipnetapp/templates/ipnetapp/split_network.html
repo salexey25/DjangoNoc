@@ -64,5 +64,10 @@
             <li><a href="{% url 'ipv4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
         {% endfor %}
     </ul>
+    <ul>
+        {% for ip_address in ip_addresses %}
+            <li><a>{{ ip_address.ip_add }} - {{ ip_address.ip_description}}</a></li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}

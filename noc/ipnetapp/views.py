@@ -272,18 +272,35 @@ def subnet(request, net_id):
                 # subnet_of - Возвращает True если эта сеть является подсетью другой
                 if new_subnet.subnet_of(parent_subnet):
                     existing_subnets = IPNetwork.objects.filter(net_parent_id=parent_net)
+                    overlap_found = False
                     for existing_subnet in existing_subnets:
                         #overlaps - True, если new_subnet частично или полностью содержиться в
                         #другой подсети, или другая полностью содержиться в этой
                         if ip_network(new_net.net_prefix).overlaps(ip_network(existing_subnet.net_prefix)):
-                            networks = IPNetwork.objects.filter(net_parent_id=net_id)
-                            return render(request, 'ipnetapp/split_network.html',
+                            overlap_found = True
+                            break
+                    #Условие проверки overlap subnet, если есть, то выводим сообщение о пересечении сетей.
+                    if overlap_found:
+                        networks = IPNetwork.objects.filter(net_parent_id=net_id)
+                        return render(request, 'ipnetapp/split_network.html',
                                           {'netv4': parent_net,'networks': networks, 'message': 'Пересечение сетей'})
-                    new_net.save()
-                    networks = IPNetwork.objects.filter(net_parent_id=net_id)
-                    return render(request, 'ipnetapp/split_network.html',
-                                  {'netv4': parent_net,'networks': networks, 'message': f'Новая подсеть создана: {new_subnet}'})
-                    #return HttpResponse(f'filter{existing_subnets}')
+                    else:
+                        # Проверяем наличие IP-адресов с таким же net_id
+                        existing_ips = IPAddress.objects.filter(ip_parent_id=parent_net.net_id)
+                        if existing_ips.exists():
+                            networks = IPNetwork.objects.filter(net_parent_id=net_id)
+                            ip_addresses = IPAddress.objects.filter(ip_parent_id=parent_net.net_id)
+                            return render(request, 'ipnetapp/split_network.html',
+                                          {'netv4': parent_net, 'networks': networks,'ip_addresses': ip_addresses,
+                                                   'message': 'Родительская сеть разбита на IP-адреса'})
+                        else:
+                            new_net.save()
+                            networks = IPNetwork.objects.filter(net_parent_id=net_id)
+                            ip_addresses = IPAddress.objects.filter(ip_parent_id=parent_net.net_id)
+                            return render(request, 'ipnetapp/split_network.html',
+                                  {'netv4': parent_net,'networks': networks, 'ip_addresses': ip_addresses,
+                                            'message': f'Новая подсеть создана: {new_subnet}'})
+                            #return HttpResponse(f'filter{existing_subnets}')
 
                 else:
                     networks = IPNetwork.objects.filter(net_parent_id=net_id)
