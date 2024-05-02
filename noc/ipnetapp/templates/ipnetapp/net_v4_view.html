@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block title %}
-
 {% endblock %}
 
 {% block content %}
-
-
+    {% if message %}
+        <p class="success-message" style="color: red;" role="alert">{{ message }}</p>
+    {% endif %}
 <div>
     <p>Create ip network {{ netv4.net_prefix }}</p>
     <p>Description: {{ netv4.net_description }}</p>
@@ -14,8 +14,10 @@
 </div>
 
 <div class="inline-elements">
+    <!-- Стандартная кнопка для возврата на предыдущую страницу -->
+    <input type="button" onclick="window.history.back();" value="Previous">
     <input type="button" onclick="location.href='/ipnetapp/list/';" value="List networks" />
- <!--   <input type="button" onclick="location.href='/ipnetapp/divide/';" value="Split network" /> -->
+<!--   <input type="button" onclick="location.href='/ipnetapp/divide/';" value="Split network" /> -->
     <input type="button" onclick="redirectToSplitNetwork({{ netv4.net_id }});" value="Create IP subnet" />
  <!--   <input type="button" onclick="location.href='/ipnetapp/delete/';" value="Delete network" /> -->
     <input type="button" onclick="redirectToIPAdd({{ netv4.net_id }});" value="Create IP address" />
@@ -26,7 +28,7 @@
         <input type="submit" value="Delete network">
     </form> -->
 </div>
-<h4>List of IP subnets:</h4>
+<h4>List of IP subnets or addresses:</h4>
     <ul>
         {% for network in networks %}
 <!--            <li>
@@ -41,7 +43,11 @@
             <li><a href="{% url 'nets_v4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
         {% endfor %}
     </ul>
-
+    <ul>
+        {% for ip_add in ip_adds %}
+            <li>{{ ip_add.ip_add }} - {{ ip_add.ip_description }}</li>
+        {% endfor %}
+    </ul>
 <script>
     function redirectToSplitNetwork(netId) {
         window.location.href = `/ipnetapp/net_v4_${netId}/split/`;

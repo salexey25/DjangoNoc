@@ -5,18 +5,40 @@
 {% endblock %}
 
 {% block content %}
-
+    <!-- Для отображения ошибки -->
+    {% if message %}
+        <p class="success-message" style="color: red;" role="alert">{{ message }}</p>
+    {% endif %}
 
 <div>
     <p>Create ip network {{ netv4.net_prefix }}</p>
     <p>Description: {{ netv4.net_description }}</p>
     <p>Created Date: {{ netv4.net_createdate }}</p>
 </div>
+
+<div class="inline-elements">
+<!--    <input type="button" onclick="redirectToParentNetwork({{ netv4.net_parent_id.net_id }});" value="Parent IP network" /> -->
+    <input type="button" onclick="window.history.back();" value="Previous">
+    <input type="button" onclick="DeleteNetwork({{ netv4.net_id }});" value="Delete network" />
+</div>
+
 <h4>List of IP addresses:</h4>
 <ul>
     {% for ip_add in ip_adds %}
         <li>{{ ip_add.ip_add }} - {{ ip_add.ip_description }}</li>
     {% endfor %}
 </ul>
+
+<!--
+<script>
+    function redirectToParentNetwork(netId) {
+        window.location.href = `/ipnetapp/net_v4_${netId}/`;
+    }
+</script> -->
+<script>
+    function DeleteNetwork(netId) {
+        window.location.href = `/ipnetapp/net_v4_${netId}/delete/`;
+    }
+</script>
 
 {% endblock %}

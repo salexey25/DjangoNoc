@@ -49,7 +49,9 @@
 </form>
 <br>
 <div>
-    <input type="button" onclick="location.href='/ipnetapp/list/';" value="List networks" />
+<!--    <input type="button" onclick="location.href='/ipnetapp/list/';" value="List networks" /> -->
+    <!-- Стандартная кнопка для возврата на предыдущую страницу -->
+    <input type="button" onclick="window.history.back();" value="Previous">
 </div>
 <h4>Список сетей с родительской сетью {{netv4.net_prefix }}</h4>
 <!--    <ul>
@@ -61,7 +63,8 @@
     </ul> -->
     <ul>
         {% for network in networks|dictsort:'net_prefix' %}
-            <li><a href="{% url 'ipv4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
+<!--            <li><a href="{% url 'ipv4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li> -->
+            <li><a href="{% url 'nets_v4_detail' network.net_id %}">{{ network.net_prefix }} - {{ network.net_description }}</a></li>
         {% endfor %}
     </ul>
     <ul>
