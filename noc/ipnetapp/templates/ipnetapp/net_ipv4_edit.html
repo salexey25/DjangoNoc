@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<br>
+<input type="button" onclick="window.history.back();" value="Previous">
+<h1>Редактирование IP-адрес description</h1>
+    <form method="post" action="{% url 'ipv4_save' netv4.net_id %}">
+        {% csrf_token %}
+        <ul>
+            {% for ip in ip_address %}
+                <li>
+                    {{ ip.ip_add }} - <input type="text" name="ip_description_{{ ip.ip_id }}" value="{{ ip.ip_description }}">
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

@@ -19,6 +19,11 @@ urlpatterns = [
     #Редактирование поля description у ip address
     #path('net_ipv4_<int:net_id>/', views.edit_ip_description, name='edit_ip_description'),
     #path('net_ipv4_<int:ip_parent_id>/', views.EditIPDescriptionView.as_view(), name='edit_ip_description'),
-#    path('nets_v4/<int:net_v4_id>', nets_v4_view, name='nets_v4_detail'),
-    # Добавьте другие маршруты по необходимости
+    #path('nets_v4/<int:net_v4_id>', nets_v4_view, name='nets_v4_detail'),
+    path('save_ip_description/', views.save_ip_description, name='save_ip_description'),
+    path('net_ipv4_<int:net_id>/edit/', views.ipv4_edit, name='ipv4_edit'),
+    #path('net_ipv4_<int:net_id>/edit/save_description/', views.save_description, name='save_description'),
+    #path('save_description/<int:net_id>/', views.save_description, name='save_description'),
+    #path('net_ipv4_<int:net_id>/save/', views.save_description, name='save_description'),
+    path('net_ipv4_<int:net_id>/save/', views.ipv4_save, name='ipv4_save'),
 ]

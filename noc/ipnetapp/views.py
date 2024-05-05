@@ -10,7 +10,7 @@ import uuid
 from ipaddress import ip_network, ip_interface, NetmaskValueError
 from django.core.validators import validate_ipv4_address
 from django.views import View
-
+from django.http import JsonResponse
 
 @login_required
 def create_network(request):
@@ -428,3 +428,75 @@ def create_subnet(request):
         form = NetworkDivisionForm()
     return render(request, 'subnet_creation_form.html', {'form': form})
 
+def save_ip_description(request):
+    if request.method == 'POST':
+        ip_id = request.POST.get('ip_id')
+        new_description = request.POST.get('new_description')
+
+        try:
+            ip_address = IPAddress.objects.get(pk=ip_id)
+            ip_address.ip_description = new_description
+            ip_address.save()
+            return JsonResponse({'success': True})
+        except IPAddress.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Запись не найдена'})
+    else:
+        return JsonResponse({'success': False, 'error': 'Неверный метод запроса'})
+
+def ipv4_edit(request, net_id):
+    # Получаем объект IP-адреса по net_id
+    #ip_address = get_object_or_404(IPAddress, pk=net_id)
+    netv4 = get_object_or_404(IPNetwork, net_id=net_id)
+    ip_addresses = IPAddress.objects.filter(ip_parent_id=net_id)
+
+    # if request.method == 'POST':
+    #     for ip in ip_addresses:
+    #     # Обработка данных формы после сохранения
+    #         new_description = request.POST.get('new_description')
+    #         ip.ip_description = new_description
+    #         ip.save()
+    #     # Перенаправление на страницу net_ipv4_view.html
+    #     return redirect('ipnetapp/net_v4_view.html')
+
+    # Отображение страницы редактирования
+    return render(request, 'ipnetapp/net_ipv4_edit.html', {'netv4': netv4, 'ip_address': ip_addresses})
+
+# def save_description(request, net_id):
+#     ip_addresses = IPAddress.objects.filter(ip_parent_id=net_id)
+#     if request.method == 'POST':
+#         for ip in ip_addresses:
+#         # Обработка данных формы после сохранения
+#             new_description = request.POST.get('new_description')
+#             ip.ip_description = new_description
+#             ip.save()
+#         # Перенаправление на страницу net_ipv4_view.html
+#         return redirect('ipnetapp/net_v4_view.html')
+
+# def save_description(request, net_id):
+#     #ip_address = get_object_or_404(IPAddress, ip_parent_id=net_id)
+#     ip_address = IPAddress.objects.filter(ip_parent_id=net_id).first()
+#     if request.method == 'POST':
+#         new_description = request.POST.get('ip_description_{}'.format(ip_address.ip_id))
+#         ip_address.ip_description = new_description
+#         ip_address.save()
+#         # Перенаправление на страницу net_v4_view.html (замените на правильный URL)
+#         return redirect('ipnetapp/net_v4_view.html')  # Замените на правильный URL
+#
+#     # Отображение страницы редактирования (если не POST-запрос)
+#     return render(request, 'ipnetapp/net_ipv4_edit.html', {'ip_address': ip_address})
+
+def ipv4_save(request, net_id):
+    netv4 = get_object_or_404(IPNetwork, net_id=net_id)
+    if request.method == 'POST':
+        ip_addresses = IPAddress.objects.filter(ip_parent_id=net_id)
+        for ip in ip_addresses:
+            new_description = request.POST.get(f'ip_description_{ip.ip_id}')
+            ip.ip_description = new_description
+            ip.save()
+
+        # После сохранения перенаправляем обратно на страницу net_ipv4_view.html
+        #return redirect('nets_v4_detail')  # Замените на фактический URL вашей страницы
+        return redirect(f'/ipnetapp/net_v4_{netv4.net_id}/')
+
+    # Если не POST-запрос, просто перенаправляем обратно на страницу net_ipv4_view.html
+    return redirect(f'/ipnetapp/net_v4_{netv4.net_id}/')

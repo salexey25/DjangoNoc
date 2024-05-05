@@ -18,14 +18,26 @@
 
 <div class="inline-elements">
 <!--    <input type="button" onclick="redirectToParentNetwork({{ netv4.net_parent_id.net_id }});" value="Parent IP network" /> -->
-    <input type="button" onclick="window.history.back();" value="Previous">
+<!--    <input type="button" onclick="window.history.back();" value="Previous"> -->
+    <input type="button" onclick="ParentNet({{ netv4.net_parent_id.net_id }});" value="Parent network" />
     <input type="button" onclick="DeleteNetwork({{ netv4.net_id }});" value="Delete network" />
+    <input type="button" onclick="EditDescription({{ netv4.net_id }});" value="Edit Description" />
 </div>
 
 <h4>List of IP addresses:</h4>
 <ul>
     {% for ip_add in ip_adds %}
-        <li>{{ ip_add.ip_add }} - {{ ip_add.ip_description }}</li>
+        <li>
+            {{ ip_add.ip_add }} - {{ ip_add.ip_description }}
+            <!--{{ ip_add.ip_add }} - <span id="ip_description">{{ ip_add.ip_description }}</span>
+            <button onclick="editDescription()">Редактировать</button> -->
+        </li>
+<!--        <form method="post" action="{% url 'save_ip_description' %}">
+            {% csrf_token %}
+            <input type="hidden" name="ip_id" value="{{ ip_add.ip_id }}">
+            {{ ip_add.ip_add }} - <input type="text" name="new_description" value="{{ ip_add.ip_description }}">
+            <button type="submit">Сохранить</button>
+        </form> -->
     {% endfor %}
 </ul>
 
@@ -36,8 +48,43 @@
     }
 </script> -->
 <script>
+    function ParentNet(netId) {
+        window.location.href = `/ipnetapp/net_v4_${netId}/`;
+    }
+</script>
+<script>
     function DeleteNetwork(netId) {
         window.location.href = `/ipnetapp/net_v4_${netId}/delete/`;
+    }
+</script>
+<script>
+    function EditDescription(netId) {
+        window.location.href = `/ipnetapp/net_ipv4_${netId}/edit/`;
+    }
+</script>
+<script>
+    function editDescription() {
+        var newDescription = prompt("Введите новое описание:");
+        if (newDescription) {
+            // Отправка данных на сервер
+            var ipId = {{ ip_add.ip_id }};
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/save_ip_description/', true);  // Используйте правильный URL-путь
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log('Значение успешно сохранено в базе данных');
+                        // Обновление отображения на странице
+                        document.getElementById('ip_description').textContent = newDescription;
+                    } else {
+                        console.error('Ошибка при сохранении значения');
+                    }
+                }
+            };
+            var data = 'ip_id=' + ipId + '&new_description=' + encodeURIComponent(newDescription);
+            xhr.send(data);
+        }
     }
 </script>
 
