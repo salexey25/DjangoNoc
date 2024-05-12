@@ -17,8 +17,12 @@
     <input type="button" onclick="location.href='/eqapp/list/';" value="List node" />
 
     <input type="button" onclick="redirectToCreateRack({{ node.nd_id }});" value="Create Rack" />
-
 </div>
+<h4>List of racks (number - unit - type):</h4>
+    {% for rack in racks %}
+        <li>{{rack.nd_rack_num}} - {{rack.nd_rack_unit}} - {{rack.nd_rack_type}}</li>
+        <!-- Надо в цикле еще вывести список устройств по каждой стойке -->
+    {% endfor %}
 
 <script>
     function redirectToCreateRack(nodeId) {

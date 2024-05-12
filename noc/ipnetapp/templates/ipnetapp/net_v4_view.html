@@ -22,6 +22,7 @@
  <!--   <input type="button" onclick="location.href='/ipnetapp/delete/';" value="Delete network" /> -->
     <input type="button" onclick="redirectToIPAdd({{ netv4.net_id }});" value="Create IP address" />
     <input type="button" onclick="DeleteNetwork({{ netv4.net_id }});" value="Delete network" />
+    <input type="button" onclick="DeleteIP({{ netv4.net_id }});" value="Delete IP" />
 <!-- Второй вариант кнопки Delete
     <form method="post" action="{% url 'delete_network' netv4.net_id %}">
         {% csrf_token %}
@@ -66,7 +67,11 @@
         window.location.href = `/ipnetapp/net_v4_${netId}/delete/`;
     }
 </script>
-
+<script>
+    function DeleteIP(netId) {
+        window.location.href = `/ipnetapp/net_ipv4_${netId}/delete/`;
+    }
+</script>
 
 
 {% endblock %}

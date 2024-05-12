@@ -8,15 +8,21 @@
 <form method="post">
  {% csrf_token %}
     <input type="hidden" name="nd_id" value="{{ node.nd_id }}">
-	<label for="Number">Rack_number</label>
-    <input type="text" id="rack_number" name="rack_number">
-    <br><br>
-    <label for="Unit">Rack_unit</label>
-    <input type="text" id="rack_unit" name="rack_unit">
-    <br><br>
-    <label for="Type">Rack_type</label>
-    <input type="text" id="rack_type" name="rack_type">
+<!--   {{ form.as_p }} -->
+        <p>
+            <label for="nd_rack_num">Rack Number:</label>
+            <input type="text" id="nd_rack_num" name="nd_rack_num">
+        </p>
+        <p>
+            <label for="nd_rack_unit">Rack Unit:</label>
+            <input type="text" id="nd_rack_unit" name="nd_rack_unit">
+        </p>
+        <p>
+            <label for="nd_rack_type">Rack Type:</label>
+            <input type="text" id="nd_rack_type" name="nd_rack_type">
+        </p>
     <br><br>
 	<input type="submit" value="Split">
 </form>
+
 {% endblock %}

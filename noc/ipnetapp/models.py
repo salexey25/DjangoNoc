@@ -8,7 +8,6 @@ class IPNetwork(models.Model):
     net_description = models.CharField(max_length=100)
     net_createdate = models.DateTimeField(auto_now_add=True)
     net_editdate = models.DateTimeField(auto_now=True)
-
     def __str__(self):
         return f"IP Network {self.net_id}: {self.net_prefix}"
 
@@ -30,3 +29,4 @@ class IPAddress(models.Model):
     ip_description = models.CharField(max_length=100)
     ip_createdate = models.DateTimeField(auto_now_add=True)
     ip_editdate = models.DateTimeField(auto_now=True)
+    ip_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

@@ -78,35 +78,42 @@ def network_list(request):
     networks = IPNetwork.objects.filter(net_parent_id__isnull=True)
     return render(request, 'ipnetapp/network_list.html', {'networks': networks})
 
-#динамическая страница создания сети
-def nets_v4_view(request, net_id):
-    #Получаем объект NetV4 по его ID или возвращаем 404 ошибку, если не найден
-    netv4 = get_object_or_404(IPNetwork, net_id=net_id)
-    #Получение объекта network по его ID
-    networks = IPNetwork.objects.filter(net_parent_id=net_id)
-#    return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'networks': networks})
-	# Получите значение маски из net_prefix
-    subnet = ip_network(netv4.net_prefix)
-    prefixlen = subnet.prefixlen
+#Динамическая страница создания сети. Первый вариант функции с автоматической генерацией ip адресов.
+# def nets_v4_view(request, net_id):
+#     #Получаем объект NetV4 по его ID или возвращаем 404 ошибку, если не найден
+#     netv4 = get_object_or_404(IPNetwork, net_id=net_id)
+#     #Получение объекта network по его ID
+#     networks = IPNetwork.objects.filter(net_parent_id=net_id)
+# #    return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'networks': networks})
+# 	# Получите значение маски из net_prefix
+#     subnet = ip_network(netv4.net_prefix)
+#     prefixlen = subnet.prefixlen
+#
+#     if prefixlen >= 25:
+#         ip_addresses_exist = IPAddress.objects.filter(ip_parent_id=net_id).exists()
+#         if not ip_addresses_exist:
+#             #Генерируем IP-адреса для данной сети
+#             ip_addresses = generate_ip_addresses(subnet)  # Предполагается, что у вас есть функция generate_ip_addresses
+#             for ip_address in ip_addresses:
+#                 #Сохраняем IP-адреса в базе данных, используя модель IPAddress
+#                 ip_obj = IPAddress.objects.create(
+#                     ip_add=str(ip_address),
+#                     ip_description=f"Generated IP for {subnet}",
+#                     ip_parent_id=netv4
+#                 )
+#                 ip_obj.save()
+#         ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
+#         return render(request, 'ipnetapp/net_ipv4_view.html', {'netv4': netv4, 'ip_adds': ip_adds})
+#     else:
+#         ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
+#         return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'ip_adds': ip_adds, 'networks': networks})
 
-    if prefixlen >= 25:
-        ip_addresses_exist = IPAddress.objects.filter(ip_parent_id=net_id).exists()
-        if not ip_addresses_exist:
-            #Генерируем IP-адреса для данной сети
-            ip_addresses = generate_ip_addresses(subnet)  # Предполагается, что у вас есть функция generate_ip_addresses
-            for ip_address in ip_addresses:
-                #Сохраняем IP-адреса в базе данных, используя модель IPAddress
-                ip_obj = IPAddress.objects.create(
-                    ip_add=str(ip_address),
-                    ip_description=f"Generated IP for {subnet}",
-                    ip_parent_id=netv4
-                )
-                ip_obj.save()
-        ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
-        return render(request, 'ipnetapp/net_ipv4_view.html', {'netv4': netv4, 'ip_adds': ip_adds})
-    else:
-        ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
-        return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'ip_adds': ip_adds, 'networks': networks})
+#Второй вариант функции nets_v4_view без  автоматической генерации ip адресов.
+def nets_v4_view(request, net_id):
+    netv4 = get_object_or_404(IPNetwork, net_id=net_id)
+    networks = IPNetwork.objects.filter(net_parent_id=net_id)
+    ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
+    return render(request, 'ipnetapp/net_v4_view.html', {'netv4': netv4, 'ip_adds': ip_adds, 'networks': networks})
 
 
 #Генератор ip адресов для функции ipv4_view
@@ -212,40 +219,55 @@ def ipv4_view(request, net_id):
 #
 #     return redirect('ipnetapp/net_ipv4_view', net_id=ip_obj.ip_parent_id.net_id)
 
-#функция для переадресации на страницу деления сети
-def split_network(request, net_id):
-    networks = IPNetwork.objects.filter(net_parent_id=net_id)
-    # Если объект не найден, будет возвращена страница с кодом 404 (страница “не найдено”)
-    netv4 = get_object_or_404(IPNetwork, net_id=net_id)
-    #networks = IPNetwork.objects.filter(net_parent_id=netv4.net_id)
-    #networks = IPNetwork.objects.all()
-    #masks = ip_network(networks.net_prefix).prefixlen
+#Функция для переадресации на страницу деления сети. Это первый вариант с автоматической генерацией Ip адресов
+# def split_network(request, net_id):
+#     networks = IPNetwork.objects.filter(net_parent_id=net_id)
+#     # Если объект не найден, будет возвращена страница с кодом 404 (страница “не найдено”)
+#     netv4 = get_object_or_404(IPNetwork, net_id=net_id)
+#     #networks = IPNetwork.objects.filter(net_parent_id=netv4.net_id)
+#     #networks = IPNetwork.objects.all()
+#     #masks = ip_network(networks.net_prefix).prefixlen
+#
+#     # Ваш код для обработки формы разделения сети
+#     # ...
+#     #return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})
+#     # Получите значение маски из net_prefix
+#     # Получите значение маски из net_prefix
+#     subnet = ip_network(netv4.net_prefix)
+#     prefixlen = subnet.prefixlen
+#
+#     if prefixlen > 24:
+#         ip_addresses_exist = IPAddress.objects.filter(ip_parent_id=net_id).exists()
+#         if not ip_addresses_exist:
+#             # Генерируем IP-адреса для данной сети
+#             ip_addresses = generate_ip_addresses(subnet)  # Предполагается, что у вас есть функция generate_ip_addresses
+#             for ip_address in ip_addresses:
+#                 # Сохраняем IP-адреса в базе данных, используя модель IPAddress
+#                 ip_obj = IPAddress.objects.create(
+#                     ip_add=str(ip_address),
+#                     ip_description=f"Generated IP for {subnet}",
+#                     ip_parent_id=netv4
+#                 )
+#                 ip_obj.save()
+#         ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
+#         return render(request, 'ipnetapp/net_ipv4_view.html', {'netv4': netv4, 'ip_adds': ip_adds})
+#     else:
+#         return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})
 
-    # Ваш код для обработки формы разделения сети
-    # ...
-    #return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})
-    # Получите значение маски из net_prefix
+#Второй вариант функции split_network в котором нет автоматической генерации IP адресов
+def split_network(request, net_id):
+    netv4 = get_object_or_404(IPNetwork, net_id=net_id)
+    networks = IPNetwork.objects.filter(net_parent_id=net_id)
+    ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
     # Получите значение маски из net_prefix
     subnet = ip_network(netv4.net_prefix)
     prefixlen = subnet.prefixlen
-
     if prefixlen > 24:
-        ip_addresses_exist = IPAddress.objects.filter(ip_parent_id=net_id).exists()
-        if not ip_addresses_exist:
-            # Генерируем IP-адреса для данной сети
-            ip_addresses = generate_ip_addresses(subnet)  # Предполагается, что у вас есть функция generate_ip_addresses
-            for ip_address in ip_addresses:
-                # Сохраняем IP-адреса в базе данных, используя модель IPAddress
-                ip_obj = IPAddress.objects.create(
-                    ip_add=str(ip_address),
-                    ip_description=f"Generated IP for {subnet}",
-                    ip_parent_id=netv4
-                )
-                ip_obj.save()
-        ip_adds = IPAddress.objects.filter(ip_parent_id=net_id)
-        return render(request, 'ipnetapp/net_ipv4_view.html', {'netv4': netv4, 'ip_adds': ip_adds})
+        return render(request, 'ipnetapp/net_v4_view.html',
+                      {'netv4': netv4, 'ip_adds': ip_adds, 'message': 'Маска > 24'})
     else:
         return render(request, 'ipnetapp/split_network.html', {'netv4': netv4, 'networks': networks})
+
 
 ########################
 # #функция удаления сети
@@ -443,20 +465,11 @@ def save_ip_description(request):
     else:
         return JsonResponse({'success': False, 'error': 'Неверный метод запроса'})
 
+#Функция для перенаправления на страницу изменения поля ip_description для IP адресов
 def ipv4_edit(request, net_id):
-    # Получаем объект IP-адреса по net_id
-    #ip_address = get_object_or_404(IPAddress, pk=net_id)
+
     netv4 = get_object_or_404(IPNetwork, net_id=net_id)
     ip_addresses = IPAddress.objects.filter(ip_parent_id=net_id)
-
-    # if request.method == 'POST':
-    #     for ip in ip_addresses:
-    #     # Обработка данных формы после сохранения
-    #         new_description = request.POST.get('new_description')
-    #         ip.ip_description = new_description
-    #         ip.save()
-    #     # Перенаправление на страницу net_ipv4_view.html
-    #     return redirect('ipnetapp/net_v4_view.html')
 
     # Отображение страницы редактирования
     return render(request, 'ipnetapp/net_ipv4_edit.html', {'netv4': netv4, 'ip_address': ip_addresses})
@@ -485,13 +498,16 @@ def ipv4_edit(request, net_id):
 #     # Отображение страницы редактирования (если не POST-запрос)
 #     return render(request, 'ipnetapp/net_ipv4_edit.html', {'ip_address': ip_address})
 
+#Функция записи в базу поля ip_description у IP адресов
 def ipv4_save(request, net_id):
     netv4 = get_object_or_404(IPNetwork, net_id=net_id)
     if request.method == 'POST':
         ip_addresses = IPAddress.objects.filter(ip_parent_id=net_id)
+        ip_by_user = request.user
         for ip in ip_addresses:
             new_description = request.POST.get(f'ip_description_{ip.ip_id}')
             ip.ip_description = new_description
+            ip.ip_by = ip_by_user
             ip.save()
 
         # После сохранения перенаправляем обратно на страницу net_ipv4_view.html
@@ -500,3 +516,11 @@ def ipv4_save(request, net_id):
 
     # Если не POST-запрос, просто перенаправляем обратно на страницу net_ipv4_view.html
     return redirect(f'/ipnetapp/net_v4_{netv4.net_id}/')
+
+#Функция удаления IP адресов
+def delete_ip(request, net_id):
+	netv4 = get_object_or_404(IPNetwork, net_id=net_id)
+	ip_addresses = IPAddress.objects.filter(ip_parent_id=net_id).delete()
+	# for ip in ip_addresses:
+    #         ip.delete()
+	return redirect(f'/ipnetapp/net_v4_{netv4.net_id}/')

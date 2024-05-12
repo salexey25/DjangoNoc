@@ -21,6 +21,7 @@
 <!--    <input type="button" onclick="window.history.back();" value="Previous"> -->
     <input type="button" onclick="ParentNet({{ netv4.net_parent_id.net_id }});" value="Parent network" />
     <input type="button" onclick="DeleteNetwork({{ netv4.net_id }});" value="Delete network" />
+    <input type="button" onclick="DeleteIP({{ netv4.net_id }});" value="Delete IP" />
     <input type="button" onclick="EditDescription({{ netv4.net_id }});" value="Edit Description" />
 </div>
 
@@ -28,7 +29,7 @@
 <ul>
     {% for ip_add in ip_adds %}
         <li>
-            {{ ip_add.ip_add }} - {{ ip_add.ip_description }}
+            {{ ip_add.ip_add }} - {{ ip_add.ip_description }} - {{ ip_add.ip_by }}
             <!--{{ ip_add.ip_add }} - <span id="ip_description">{{ ip_add.ip_description }}</span>
             <button onclick="editDescription()">Редактировать</button> -->
         </li>
@@ -55,6 +56,11 @@
 <script>
     function DeleteNetwork(netId) {
         window.location.href = `/ipnetapp/net_v4_${netId}/delete/`;
+    }
+</script>
+<script>
+    function DeleteIP(netId) {
+        window.location.href = `/ipnetapp/net_ipv4_${netId}/delete/`;
     }
 </script>
 <script>

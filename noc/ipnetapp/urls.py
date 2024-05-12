@@ -20,10 +20,15 @@ urlpatterns = [
     #path('net_ipv4_<int:net_id>/', views.edit_ip_description, name='edit_ip_description'),
     #path('net_ipv4_<int:ip_parent_id>/', views.EditIPDescriptionView.as_view(), name='edit_ip_description'),
     #path('nets_v4/<int:net_v4_id>', nets_v4_view, name='nets_v4_detail'),
+    #этот маршрут нерабочий, его надо почистить совместно с javasacript в файле net_ipv4_view
     path('save_ip_description/', views.save_ip_description, name='save_ip_description'),
+    #маршрут для редиректа на страницу изменения поля ip_description
     path('net_ipv4_<int:net_id>/edit/', views.ipv4_edit, name='ipv4_edit'),
     #path('net_ipv4_<int:net_id>/edit/save_description/', views.save_description, name='save_description'),
     #path('save_description/<int:net_id>/', views.save_description, name='save_description'),
     #path('net_ipv4_<int:net_id>/save/', views.save_description, name='save_description'),
+    #маршрут, который запускается при нажатии кнопки save в net_ipv4_edit.html. Но в самой функции все редиректится на
+    # страницу сети и этого маршрута net_ipv4_<int:net_id>/save/ нигде не видно
     path('net_ipv4_<int:net_id>/save/', views.ipv4_save, name='ipv4_save'),
+    path('net_ipv4_<int:net_id>/delete/', views.delete_ip, name='delete_ip'),
 ]

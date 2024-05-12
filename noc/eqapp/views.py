@@ -17,11 +17,18 @@ def create_node(request):
     return render(request, 'eqapp/node_form.html', {'form': form})
 
 def rack(request, nd_id):
+    #node = = get_object_or_404(Rack, net_id=net_id)
     if request.method == 'POST':
         form = RackForm(request.POST)
         if form.is_valid():
-            rack.save()
-            return redirect('rack_list')  # Перенаправление на список стоек
+            rack_instance = form.save(commit=False) # Создание экземпляра без сохранения в базе данных
+            node = Rack.objects.get(nd_id=nd_id)
+            rack_instance.nd_parent_id = node  # Присвоение значения nd_id полю nd_parent_id
+            rack_instance.nd_rack_num = form.cleaned_data['nd_rack_num']
+            rack_instance.nd_rack_unit = form.cleaned_data['nd_rack_unit']
+            rack_instance.nd_rack_type = form.cleaned_data['nd_rack_type']
+            rack_instance.save()  # Сохранение экземпляра в базе данных
+            return redirect(f'/eqapp/node_{nd_id}/')
     else:
         form = RackForm()
     return render(request, 'eqapp/create_rack.html', {'form': form})
@@ -40,8 +47,8 @@ def create_device(request):
 def node_view(request, nd_id):
     #Получаем объект Node по его ID или возвращаем 404 ошибку, если не найден
     node = get_object_or_404(Rack, nd_id=nd_id)
-
-    return render(request, 'eqapp/node_view.html', {'node': node})
+    racks = Rack.objects.filter(nd_parent_id=nd_id)
+    return render(request, 'eqapp/node_view.html', {'node': node, 'racks': racks})
 
 def create_rack(request, nd_id):
     # Если объект не найден, будет возвращена страница с кодом 404 (страница “не найдено”)
