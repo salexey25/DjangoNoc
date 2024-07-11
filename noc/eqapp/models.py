@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -29,3 +30,21 @@ class Device(models.Model):
 
     def __str__(self):
         return f"Device {self.hw_id}"
+
+class Equipment(models.Model):
+    eq_id = models.AutoField(primary_key=True)
+    eq_parent_id = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+    eq_vendor = models.CharField(max_length=100)
+    eq_model = models.CharField(max_length=100)
+    eq_hostname = models.CharField(max_length=100)
+    eq_int = models.CharField(max_length=10)
+    eq_num = models.CharField(max_length=10)
+    eq_rack = models.ForeignKey('Rack', on_delete=models.CASCADE, related_name='equipment')
+    eq_link = models.CharField(max_length=255)  # Combine eq_hostname, eq_int, and eq_num from Device model
+    #eq_ip = models.ForeignKey('IPAddress', on_delete=models.CASCADE)
+    eq_date = models.DateTimeField(auto_now_add=True)
+    eq_edit = models.DateTimeField(auto_now=True)
+    eq_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"Equipment {self.eq_id}"
